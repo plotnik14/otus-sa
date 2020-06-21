@@ -13,3 +13,18 @@ server:
 #    hikari:
 #      connectionTimeout: 20000
 #      maximumPoolSize: 5
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
