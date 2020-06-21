@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: hello-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-java-app
+  template:
+    metadata: 
+      labels: 
+        app: hello-java-app
+    spec:
+      containers:
+      - name: hello-java
+        image: plotnikov93av/otus-docker-hw:v3
+        ports:
+          - name: web
+            containerPort: 8000

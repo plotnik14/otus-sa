@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: otus-app-initdb
+spec:
+  template:
+    metadata:
+      name: otus-app-initdb
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        env:
+          - name: DATABASE_URI
+            valueFrom:
+                secretKeyRef:
+                  name: alexp-secret
+                  key: DATABASE_URI_POSTGRESQL
+        image: postgres:12
+        command:
+          - sh
+          - "-c"
+          - |
+            psql $DATABASE_URI <<'EOF'
+              CREATE TABLE users(id bigint NOT NULL, email character varying(255), first_name character varying(255), last_name character varying(255), phone character varying(255), username character varying(255));
+              insert into users(id, username, first_name, last_name, email, phone) values(100000001, 'alex1', 'Alex1', 'P1', 'alex1@gmail.com', '+79510001122');
+              insert into users(id, username, first_name, last_name, email, phone) values(100000002, 'alex2', 'Alex2', 'P2', 'alex2@gmail.com', '+79510001133');
+              insert into users(id, username, first_name, last_name, email, phone) values(100000003, 'alex3', 'Alex3', 'P3', 'alex3@gmail.com', '+79510001144');
+              insert into users(id, username, first_name, last_name, email, phone) values(100000004, 'alex4', 'Alex4', 'P4', 'alex4@gmail.com', '+79510001155');
+              insert into users(id, username, first_name, last_name, email, phone) values(100000005, 'alex5', 'Alex5', 'P5', 'alex5@gmail.com', '+79510001166');
+            EOF
+  backoffLimit: 15

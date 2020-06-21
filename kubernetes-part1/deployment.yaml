@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: alexp-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: alexp-java-app
+  template:
+    metadata: 
+      labels: 
+        app: alexp-java-app
+    spec:
+      containers:
+      - name: java-app
+        image: plotnikov93av/otus-docker-hw:v3
+        ports:
+          - name: web
+            containerPort: 8000
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /health
+          initialDelaySeconds: 10
+          periodSeconds: 5
