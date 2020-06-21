@@ -1,0 +1,15 @@
+server:
+  port: 8000
+
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
