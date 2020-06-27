@@ -2,9 +2,11 @@ package com.alexp.controller;
 
 import com.alexp.model.User;
 import com.alexp.repository.UserRepository;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Timed
 @RestController
 @RequestMapping("/user")
 public class UserController{
