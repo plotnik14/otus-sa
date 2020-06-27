@@ -6,7 +6,7 @@ import io.micrometer.core.annotation.Timed;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@Timed
+@Timed(value = "user.requests")
 @RestController
 @RequestMapping("/user")
 public class UserController{
