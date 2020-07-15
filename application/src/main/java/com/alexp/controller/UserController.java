@@ -20,7 +20,7 @@ public class UserController{
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Iterable<User> getAllUsers(){
-        if (Math.random() * 100 == 50){
+        if (Math.random() * 100 < 5){
             throw new IndexOutOfBoundsException("Just for fun. Need more 5xx");
         }
         return userRepository.findAll();
