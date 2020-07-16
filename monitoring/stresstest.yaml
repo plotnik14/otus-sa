@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stress-test5
+spec:
+  template:
+    metadata:
+      name: stress-test5
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: stress-test5
+          image: curlimages/curl:7.71.1
+          args:
+            - /bin/sh
+            - -c
+            - |
+              while true;
+              do
+              	curl http://arch.homework/otusapp/user;
+              	curl http://arch.homework/otusapp/user/100000001;
+              	curl --header "Content-Type: application/json" --request POST --data '{"username": "plotnik14","firstName": "Alex","lastName": "P","email": "alex@p.com","phone": "+79516667788"}' http://arch.homework/otusapp/user;
+              	curl --header "Content-Type: application/json" --request PUT --data '{"username": "plotnik14","firstName": "Alex2","lastName": "P2","email": "alex@p.com","phone": "+79516667788"}' http://arch.homework/otusapp/user/100000001;
+              done;
