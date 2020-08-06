@@ -1,6 +1,10 @@
 package com.alexp.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
+    private String id;
     private String status;
 
     public Response(String status) {
@@ -8,6 +12,14 @@ public class Response {
     }
 
     public Response() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getStatus() {
