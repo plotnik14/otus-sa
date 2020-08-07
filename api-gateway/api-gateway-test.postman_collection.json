@@ -1,0 +1,407 @@
+{
+	"info": {
+		"_postman_id": "067f721a-987a-4f45-9657-54851fd777f1",
+		"name": "api-gateway-test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register user 1",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8f2951b8-e6fa-4d5d-8253-f116d2ff36df",
+						"exec": [
+							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))\r",
+							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))\r",
+							"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))\r",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))\r",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9a47b426-da61-4d4e-a13c-81862cd170b9",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"userId_1\", responseJSON[\"id\"])"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"firstName\":\"{{firstName}}\",\r\n    \"lastName\":\"{{lastName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth-proxy/register",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-proxy",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user 1 data. Failed",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/user-management/users/{{userId_1}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-management",
+						"users",
+						"{{userId_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user 1. Failed",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\":\"newName\",\r\n    \"lastName\":\"newLastName\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/user-management/users/{{userId_1}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-management",
+						"users",
+						"{{userId_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth-proxy/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-proxy",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user 1. Successful",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\":\"newName\",\r\n    \"lastName\":\"newLastName\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/user-management/users/{{userId_1}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-management",
+						"users",
+						"{{userId_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user 1 data. Successful",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/user-management/users/{{userId_1}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-management",
+						"users",
+						"{{userId_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user 1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/auth-proxy/logout",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-proxy",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8f2951b8-e6fa-4d5d-8253-f116d2ff36df",
+						"exec": [
+							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))\r",
+							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))\r",
+							"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))\r",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))\r",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9a47b426-da61-4d4e-a13c-81862cd170b9",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"userId_2\", responseJSON[\"id\"])"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"firstName\":\"{{firstName}}\",\r\n    \"lastName\":\"{{lastName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth-proxy/register",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-proxy",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth-proxy/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth-proxy",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user 1 data. Failed for user 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/user-management/users/{{userId_1}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-management",
+						"users",
+						"{{userId_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user 1. Failed for user 2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\":\"newName\",\r\n    \"lastName\":\"newLastName\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/user-management/users/{{userId_1}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-management",
+						"users",
+						"{{userId_1}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7fd45178-13d1-403a-a7d0-b6457b8b9200",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "920fc510-f01b-4b15-b15a-ce1a05670aed",
+				"type": "text/javascript",
+				"exec": [
+					"tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "dfd8ab0d-327b-4674-97ba-9b7e9f685521",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		},
+		{
+			"id": "04a9a335-3928-4c87-acc9-191b33b3b3b4",
+			"key": "login",
+			"value": ""
+		},
+		{
+			"id": "aa1098a4-6e78-43e3-a44b-edc0c16c6722",
+			"key": "password",
+			"value": ""
+		},
+		{
+			"id": "c0d09808-3d0e-421b-b203-37782d5416d4",
+			"key": "email",
+			"value": ""
+		},
+		{
+			"id": "1e35edb3-3268-437a-9c30-997587ce93b4",
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"id": "205c9500-3f52-482d-bb70-6ee548cd5dab",
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"id": "b57321d4-b686-4706-b9fa-968cbd83cdfb",
+			"key": "userId_1",
+			"value": ""
+		},
+		{
+			"id": "12928afb-f763-4964-958c-c3e0f33ce84e",
+			"key": "userId_2",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
