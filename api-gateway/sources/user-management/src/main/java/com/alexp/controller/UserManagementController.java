@@ -3,6 +3,8 @@ package com.alexp.controller;
 import com.alexp.model.Response;
 import com.alexp.model.User;
 import com.alexp.repositoriy.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import java.util.UUID;
 
 @RestController
 public class UserManagementController {
+
+    private Logger logger = LoggerFactory.getLogger(UserManagementController.class);
 
     private RestTemplate restTemplate;
     private UserRepository userRepository;
@@ -78,6 +82,7 @@ public class UserManagementController {
 
     private boolean authorizedUser(HttpServletRequest httpServletRequest, String userId) {
         if (httpServletRequest.getCookies() == null){
+            logger.debug("cookies are null");
             return false;
         }
 
@@ -88,12 +93,19 @@ public class UserManagementController {
                 .orElse(null);
 
         if (sessionIdCookie == null){
+            logger.debug("sessionId hasn't been found in cookies:{}", cookies);
             return false;
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.COOKIE, "sessionId="+sessionIdCookie.getValue());
-        ResponseEntity<Object> responseEntity = restTemplate.exchange("http://localhost:8000/auth", HttpMethod.GET, new HttpEntity<>(httpHeaders), Object.class);
+
+        logger.debug("before rest to auth");
+
+        // ToDo move url to ENV
+        ResponseEntity<Object> responseEntity = restTemplate.exchange("http://auth:9000/auth", HttpMethod.GET, new HttpEntity<>(httpHeaders), Object.class);
+
+        logger.debug("after rest to auth");
 
         String userIdHeader = responseEntity.getHeaders().get("X-UserId").get(0);
 
