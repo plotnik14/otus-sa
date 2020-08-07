@@ -6,6 +6,8 @@ import com.alexp.model.Response;
 import com.alexp.model.Session;
 import com.alexp.repository.AuthUserRepository;
 import com.alexp.repository.SessionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ import java.util.*;
 @RestController
 public class AuthController {
 
+    private Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     private RestTemplate restTemplate;
 
     private AuthUserRepository authUserRepository;
@@ -36,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public Response register(@RequestBody Request request) {
+    public ResponseEntity<Response> register(@RequestBody Request request) {
         AuthUser user = new AuthUser();
         user.setLogin(request.getLogin());
         user.setPassword(securePassword(request.getPassword()));
@@ -44,17 +48,24 @@ public class AuthController {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
 
+        AuthUser existingUser = authUserRepository.findByLogin(user.getLogin());
+        if (existingUser != null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         AuthUser createdUser = authUserRepository.save(user);
 
         createUserInUM(createdUser);
 
         Response response = new Response();
         response.setId(createdUser.getUserId().toString());
-        return response;
+
+        return new ResponseEntity<Response>(response, HttpStatus.OK);
     }
 
     private void createUserInUM(AuthUser user){
-        restTemplate.postForEntity("http://localhost:8001/users", user, Object.class);
+        // ToDo move url to ENV
+        restTemplate.postForEntity("http://user-management:9000/users", user, Object.class);
     }
 
     @PostMapping("/login")
@@ -69,13 +80,14 @@ public class AuthController {
         );
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         String sessionId = createSession(user);
 
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setHttpOnly(true);
+        cookie.setPath("/");
         httpServletResponse.addCookie(cookie);
 
         return new ResponseEntity<Response>(new Response("ok"), HttpStatus.OK);
@@ -84,6 +96,7 @@ public class AuthController {
     @GetMapping("/auth")
     public ResponseEntity<Response> auth(HttpServletRequest httpServletRequest) {
         if (httpServletRequest.getCookies() == null) {
+            logger.debug("cookies are null");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -94,6 +107,7 @@ public class AuthController {
                 .orElse(null);
 
         if (sessionIdCookie == null){
+            logger.debug("sessionId hasn't been found in cookies:{}", cookies);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -101,6 +115,7 @@ public class AuthController {
         Session session = sessionRepository.findById(UUID.fromString(sessionId)).orElse(null);
 
         if (session == null) {
+            logger.debug("Session with this id:{} doesn't exist", sessionId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -115,6 +130,8 @@ public class AuthController {
 
         Response response = new Response();
         response.setId(session.getUserId().toString());
+
+        logger.debug("Headers added");
 
         return new ResponseEntity<Response>(response, httpHeaders, HttpStatus.OK);
     }
