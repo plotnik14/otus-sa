@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +24,13 @@ import java.util.*;
 @RestController
 public class AuthController {
 
+    private RestTemplate restTemplate;
+
     private AuthUserRepository authUserRepository;
     private SessionRepository sessionRepository;
 
-    public AuthController(AuthUserRepository authUserRepository,
-                          SessionRepository sessionRepository) {
+    public AuthController(RestTemplate restTemplate, AuthUserRepository authUserRepository, SessionRepository sessionRepository) {
+        this.restTemplate = restTemplate;
         this.authUserRepository = authUserRepository;
         this.sessionRepository = sessionRepository;
     }
@@ -43,9 +46,15 @@ public class AuthController {
 
         AuthUser createdUser = authUserRepository.save(user);
 
+        createUserInUM(createdUser);
+
         Response response = new Response();
         response.setId(createdUser.getUserId().toString());
         return response;
+    }
+
+    private void createUserInUM(AuthUser user){
+        restTemplate.postForEntity("http://localhost:8001/users", user, Object.class);
     }
 
     @PostMapping("/login")
@@ -143,7 +152,7 @@ public class AuthController {
         return sessionRepository.findAll();
     }
 
-    @GetMapping("/users")
+    @GetMapping("/users/authTest")
     public Iterable<AuthUser> users() {
         return authUserRepository.findAll();
     }
