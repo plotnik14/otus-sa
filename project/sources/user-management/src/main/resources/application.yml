@@ -1,0 +1,8 @@
+server:
+  port: 8000
+  tomcat:
+    max-threads: 1
+
+logging:
+  level:
+    com.alexp: debug
