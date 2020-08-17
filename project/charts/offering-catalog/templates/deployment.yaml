@@ -22,6 +22,12 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
+          # env:
+          #   - name : JAVA_OPTIONS
+          #     value : -Xmx150m
+          resources:
+            limits:
+              memory: "350Mi"
           livenessProbe:
             httpGet:
               port: http
