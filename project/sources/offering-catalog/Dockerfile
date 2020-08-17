@@ -4,4 +4,4 @@ RUN  addgroup appgroup && \
 COPY ./target/offering-catalog*.jar /app/offering-catalog.jar
 EXPOSE 8000
 USER app
-CMD ["/usr/bin/java", "-jar", "/app/offering-catalog.jar"]
+CMD ["/usr/bin/java", "-jar", "-Xmx200m", "/app/offering-catalog.jar"]
