@@ -4,4 +4,4 @@ RUN  addgroup appgroup && \
 COPY ./target/warehouse-management*.jar /app/warehouse-management.jar
 EXPOSE 8000
 USER app
-CMD ["/usr/bin/java", "-jar", "/app/warehouse-management.jar"]
+CMD ["/usr/bin/java", "-jar", "-Xmx200m", "/app/warehouse-management.jar"]
