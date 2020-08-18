@@ -4,4 +4,4 @@ RUN  addgroup appgroup && \
 COPY ./target/notification-service*.jar /app/notification-service.jar
 EXPOSE 8000
 USER app
-CMD ["/usr/bin/java", "-jar", "/app/notification-service.jar"]
+CMD ["/usr/bin/java", "-jar", "-Xmx200m", "/app/notification-service.jar"]

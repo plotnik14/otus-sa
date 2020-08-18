@@ -4,4 +4,4 @@ RUN  addgroup appgroup && \
 COPY ./target/user-management*.jar /app/user-management.jar
 EXPOSE 8000
 USER app
-CMD ["/usr/bin/java", "-jar", "/app/user-management.jar"]
+CMD ["/usr/bin/java", "-jar", "-Xmx200m", "/app/user-management.jar"]

@@ -4,4 +4,4 @@ RUN  addgroup appgroup && \
 COPY ./target/auth*.jar /app/auth.jar
 EXPOSE 8000
 USER app
-CMD ["/usr/bin/java", "-jar", "/app/auth.jar"]
+CMD ["/usr/bin/java", "-jar", "-Xmx200m", "/app/auth.jar"]
