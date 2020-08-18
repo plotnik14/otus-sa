@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import com.alexp.model.Response;
 
 @RestController
-public class DeliveryServiceController {
+public class HealthController {
 
     @GetMapping("/health")
     public Response healthCheck() {
