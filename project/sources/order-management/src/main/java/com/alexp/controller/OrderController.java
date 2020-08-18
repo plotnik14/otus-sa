@@ -1,6 +1,7 @@
 package com.alexp.controller;
 
 import com.alexp.model.*;
+import com.alexp.rabbitmq.RabbitMessagingService;
 import com.alexp.repository.OrderItemsRepository;
 import com.alexp.repository.OrderRepository;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,16 @@ public class OrderController {
 
     private final OrderRepository orderRepository;
     private final OrderItemsRepository orderItemsRepository;
+    private final RabbitMessagingService rabbitMessagingService;
 
     private long sequenceNumber; // Todo change to something better
 
-    public OrderController(OrderRepository orderRepository, OrderItemsRepository orderItemsRepository) {
+    public OrderController(OrderRepository orderRepository,
+                           OrderItemsRepository orderItemsRepository,
+                           RabbitMessagingService rabbitMessagingService) {
         this.orderRepository = orderRepository;
         this.orderItemsRepository = orderItemsRepository;
+        this.rabbitMessagingService = rabbitMessagingService;
         initDB();
         sequenceNumber = 1;
     }
@@ -28,6 +33,9 @@ public class OrderController {
     public ResponseEntity<Iterable<Order>> getOrdersByParams(@RequestParam("customerId") UUID customerId) {
         Iterable<Order> orders = orderRepository.findAll();
         // ToDo BY CUSTOMER ID!
+
+        rabbitMessagingService.sendOrder("ALPL Order");
+
         return ResponseEntity.ok(orders);
     }
 
