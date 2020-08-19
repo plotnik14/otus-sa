@@ -9,7 +9,7 @@ import java.util.UUID;
 @Service
 public class OfferingCatalogAdapter {
 
-    private static final String OFFERING_CATALOG_SERVICE_URL = "localhost:8001";
+    private static final String OFFERING_CATALOG_URL = "localhost:8001";
 
     private final RestTemplate restTemplate;
 
@@ -19,7 +19,7 @@ public class OfferingCatalogAdapter {
 
     public Offering getOfferingById(UUID offeringId) {
         Offering offering = restTemplate.getForObject(
-                "http://"+OFFERING_CATALOG_SERVICE_URL+"/api/v1/offerings/"+offeringId,
+                "http://"+ OFFERING_CATALOG_URL +"/api/v1/offerings/"+offeringId,
                 Offering.class
         );
         return offering;

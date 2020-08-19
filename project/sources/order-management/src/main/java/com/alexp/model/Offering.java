@@ -7,7 +7,7 @@ public class Offering {
     private String name;
     private Double price;
     private String description;
-    private Integer available;
+    private Long available;
     private String status;
 
     public Offering() {
@@ -45,11 +45,11 @@ public class Offering {
         this.description = description;
     }
 
-    public Integer getAvailable() {
+    public Long getAvailable() {
         return available;
     }
 
-    public void setAvailable(Integer available) {
+    public void setAvailable(Long available) {
         this.available = available;
     }
 
