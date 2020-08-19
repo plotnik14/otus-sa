@@ -1,9 +1,14 @@
 package com.alexp.model;
 
 public enum OrderStatus {
-    IN_PROGRESS("In Progress");
+    IN_PROGRESS("In Progress"),
+    SUBMITTED("Submitted"),
+    READY_FOR_PAYMENT("Ready for payment"),
+    READY_FOR_DELIVERY("Ready for delivery"),
+    COMPLETED("Completed"),
+    CANCELLED("Cancelled");
 
-    private String name;
+    private final String name;
 
     OrderStatus(String name) {
         this.name = name;

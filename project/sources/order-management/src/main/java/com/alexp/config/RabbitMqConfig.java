@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
     @Bean
     public Queue orderStatusQueue() {
-        return new Queue("order.status.queue", false);
+        return new Queue("order.status.om.queue", false);
     }
 
     @Bean

@@ -2,6 +2,7 @@ package com.alexp.controller;
 
 import com.alexp.model.*;
 import com.alexp.rabbitmq.RabbitMessagingService;
+import com.alexp.rabbitmq.event.OrderStatusChangedEvent;
 import com.alexp.repository.OrderItemsRepository;
 import com.alexp.repository.OrderRepository;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +32,7 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<Iterable<Order>> getOrdersByParams(@RequestParam("customerId") UUID customerId) {
-        Iterable<Order> orders = orderRepository.findAll();
-        // ToDo BY CUSTOMER ID!
-
-        rabbitMessagingService.sendOrder("ALPL Order");
-
+        Iterable<Order> orders = orderRepository.findAllByCustomerId(customerId);
         return ResponseEntity.ok(orders);
     }
 
@@ -74,8 +71,22 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
+        //ToDo validation
+
+        String previousStatus = order.getStatus();
+
         order.setStatus(changeStatusRequest.getStatus());
         order = orderRepository.save(order);
+
+        OrderStatusChangedEvent orderStatusChangedEvent = new OrderStatusChangedEvent();
+        orderStatusChangedEvent.setOrderId(order.getOrderId());
+        orderStatusChangedEvent.setCustomerId(order.getCustomerId());
+        orderStatusChangedEvent.setOrderName(order.getName());
+        orderStatusChangedEvent.setPreviousStatus(previousStatus);
+        orderStatusChangedEvent.setNewStatus(order.getStatus());
+
+        rabbitMessagingService.sendOrderStatusChangedEvent(orderStatusChangedEvent);
+
         return ResponseEntity.ok(order);
     }
 
@@ -144,9 +155,9 @@ public class OrderController {
     private void initDB() {
         Order order = new Order();
         order.setName("Test Order");
-        order.setCustomerId(UUID.randomUUID());
+        order.setCustomerId(UUID.fromString("d1fa0ebe-e247-11ea-87d0-0242ac130003"));
         order.setDeliveryAddress("Address");
-        order.setPaymentMethod("Address");
+        order.setPaymentMethod("Credit Card");
         order.setStatus("In Progress");
         order.setTotalPrice(20.0);
 

@@ -1,9 +1,12 @@
 package com.alexp.rabbitmq;
 
+import com.alexp.rabbitmq.event.OrderStatusChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class RabbitMessagingService {
@@ -15,9 +18,9 @@ public class RabbitMessagingService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendOrder(String order) {
-        LOGGER.debug("Message to send:{}", order);
-
-        rabbitTemplate.convertAndSend("order.status.exchange", "order.status.changed", order);
+    public void sendOrderStatusChangedEvent(OrderStatusChangedEvent orderStatusChangedEvent) {
+        orderStatusChangedEvent.setIdempotenceKey(UUID.randomUUID());
+        rabbitTemplate.convertAndSend("order.status.exchange", "order.status.*", orderStatusChangedEvent);
+        LOGGER.debug("Message sent:{}", orderStatusChangedEvent);
     }
 }
