@@ -22,7 +22,22 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Binding binding(Queue orderStatusQueue, TopicExchange orderStatusExchange) {
+    public Binding bindingOrderStatus(Queue orderStatusQueue, TopicExchange orderStatusExchange) {
         return BindingBuilder.bind(orderStatusQueue).to(orderStatusExchange).with("order.status.*");
+    }
+
+    @Bean
+    public Queue orderReservationQueue() {
+        return new Queue("order.reservation.om.queue", false);
+    }
+
+    @Bean
+    public TopicExchange orderReservationExchange() {
+        return new TopicExchange("order.reservation.exchange");
+    }
+
+    @Bean
+    public Binding bindingReservation(Queue orderReservationQueue, TopicExchange orderReservationExchange) {
+        return BindingBuilder.bind(orderReservationQueue).to(orderReservationExchange).with("order.reservation.*");
     }
 }
