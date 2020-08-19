@@ -1,10 +1,13 @@
 package com.alexp.controller;
 
+import com.alexp.adapter.OfferingCatalogAdapter;
 import com.alexp.model.*;
 import com.alexp.rabbitmq.RabbitMessagingService;
 import com.alexp.rabbitmq.event.OrderStatusChangedEvent;
 import com.alexp.repository.OrderItemsRepository;
 import com.alexp.repository.OrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,18 +17,23 @@ import java.util.UUID;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
+
     private final OrderRepository orderRepository;
     private final OrderItemsRepository orderItemsRepository;
     private final RabbitMessagingService rabbitMessagingService;
+    private final OfferingCatalogAdapter offeringCatalogAdapter;
 
     private long sequenceNumber; // Todo change to something better
 
     public OrderController(OrderRepository orderRepository,
                            OrderItemsRepository orderItemsRepository,
-                           RabbitMessagingService rabbitMessagingService) {
+                           RabbitMessagingService rabbitMessagingService,
+                           OfferingCatalogAdapter offeringCatalogAdapter) {
         this.orderRepository = orderRepository;
         this.orderItemsRepository = orderItemsRepository;
         this.rabbitMessagingService = rabbitMessagingService;
+        this.offeringCatalogAdapter = offeringCatalogAdapter;
         initDB();
         sequenceNumber = 1;
     }
@@ -87,15 +95,24 @@ public class OrderController {
 
         rabbitMessagingService.sendOrderStatusChangedEvent(orderStatusChangedEvent);
 
+        LOGGER.debug("Order:{} status changed from {} to {}", order.getOrderId(), previousStatus, order.getStatus());
+
         return ResponseEntity.ok(order);
     }
 
     @PostMapping("/{orderId}/items")
     public ResponseEntity<Order> addItemToOrder(@PathVariable("orderId") UUID orderId,
                                                 @RequestBody OrderItem orderItem) {
-        // ToDo add integration with catalog
-        orderItem.setPrice(100.0);
-        orderItem.setName("Offer Name 1");
+        Offering offering = offeringCatalogAdapter.getOfferingById(orderItem.getOfferingId());
+
+        LOGGER.debug("Found offering:{}", offering);
+
+        if (offering == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        orderItem.setPrice(offering.getPrice());
+        orderItem.setName(offering.getName());
 
         Order order = orderRepository.findById(orderId).orElse(null);
 
@@ -103,12 +120,12 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        // ToDo calculate price
-
         orderItem.setOrder(order);
         order.getItems().add(orderItem);
 
         orderItemsRepository.save(orderItem);
+
+        calculateTotalPrice(order);
 
         order = orderRepository.save(order);
         return ResponseEntity.ok(order);
@@ -117,13 +134,18 @@ public class OrderController {
     @DeleteMapping("/{orderId}/items/{itemId}")
     public ResponseEntity<Order> deleteItemFromOrder(@PathVariable("orderId") UUID orderId,
                                                      @PathVariable("itemId") UUID itemId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
 
+        if (order == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         orderItemsRepository.deleteById(itemId);
 
-        // ToDo calculate price
+        calculateTotalPrice(order);
 
-        return ResponseEntity.noContent().build();
+        order = orderRepository.save(order);
+        return ResponseEntity.ok(order);
     }
 
     @PutMapping("/{orderId}")
@@ -150,6 +172,16 @@ public class OrderController {
         order = orderRepository.save(order);
 
         return ResponseEntity.ok(order);
+    }
+
+    private void calculateTotalPrice(Order order){
+        double totalPrice = 0;
+
+        for (OrderItem item : order.getItems()) {
+            totalPrice += item.getPrice();
+        }
+
+        order.setTotalPrice(totalPrice);
     }
 
     private void initDB() {
