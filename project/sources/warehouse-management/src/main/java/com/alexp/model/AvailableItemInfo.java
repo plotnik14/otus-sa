@@ -22,4 +22,12 @@ public class AvailableItemInfo {
     public void setCount(Long count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return "AvailableItemInfo{" +
+                "address='" + address + '\'' +
+                ", count=" + count +
+                '}';
+    }
 }

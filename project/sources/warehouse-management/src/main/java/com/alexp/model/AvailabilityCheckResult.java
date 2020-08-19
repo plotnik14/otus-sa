@@ -34,4 +34,13 @@ public class AvailabilityCheckResult {
     public void setAvailability(List<AvailableItemInfo> availability) {
         this.availability = availability;
     }
+
+    @Override
+    public String toString() {
+        return "AvailabilityCheckResult{" +
+                "offeringId=" + offeringId +
+                ", totalCount=" + totalCount +
+                ", availability=" + availability +
+                '}';
+    }
 }
