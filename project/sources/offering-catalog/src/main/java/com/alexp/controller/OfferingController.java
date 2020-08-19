@@ -1,9 +1,13 @@
 package com.alexp.controller;
 
+import com.alexp.adapter.WarehouseManagerAdapter;
+import com.alexp.model.AvailabilityCheckResult;
 import com.alexp.model.ChangeStatusRequest;
 import com.alexp.model.Offering;
 import com.alexp.model.OfferingStatus;
 import com.alexp.repository.OfferingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +17,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/offerings")
 public class OfferingController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OfferingController.class);
 
     private final OfferingRepository offeringRepository;
+    private final WarehouseManagerAdapter warehouseManagerAdapter;
 
-    public OfferingController(OfferingRepository offeringRepository) {
+    public OfferingController(OfferingRepository offeringRepository,
+                              WarehouseManagerAdapter warehouseManagerAdapter) {
         this.offeringRepository = offeringRepository;
+        this.warehouseManagerAdapter = warehouseManagerAdapter;
         iniDB();
     }
 
@@ -36,8 +44,15 @@ public class OfferingController {
             return ResponseEntity.notFound().build();
         }
 
-        // ToDo get count from WareHouse
-        offering.setAvailable(20);
+        AvailabilityCheckResult availabilityCheckResult = warehouseManagerAdapter.checkOfferingAvailability(offeringId);
+
+        LOGGER.debug("AvailabilityCheckResult:{}", availabilityCheckResult);
+
+        if(availabilityCheckResult == null) {
+            offering.setAvailable(0L);
+        } else {
+            offering.setAvailable(availabilityCheckResult.getTotalCount());
+        }
 
         return ResponseEntity.ok(offering);
     }
@@ -104,7 +119,7 @@ public class OfferingController {
 
     private void iniDB() {
         Offering offering = new Offering();
-        offering.setOfferingId(UUID.randomUUID());
+        offering.setOfferingId(UUID.fromString("8d68f7be-e24d-11ea-87d0-0242ac130003"));
         offering.setName("VESTON F-38/BK");
         offering.setPrice(6400.0);
         offering.setDescription("VESTON F-38/BK Desc");
@@ -112,7 +127,7 @@ public class OfferingController {
         offeringRepository.save(offering);
 
         offering = new Offering();
-        offering.setOfferingId(UUID.randomUUID());
+        offering.setOfferingId(UUID.fromString("995b0cba-e24d-11ea-87d0-0242ac130003"));
         offering.setName("MARTIN LX BLACK");
         offering.setPrice(38990.0);
         offering.setDescription("MARTIN LX BLACK Desc");
@@ -120,7 +135,7 @@ public class OfferingController {
         offeringRepository.save(offering);
 
         offering = new Offering();
-        offering.setOfferingId(UUID.randomUUID());
+        offering.setOfferingId(UUID.fromString("9f4bb246-e24d-11ea-87d0-0242ac130003"));
         offering.setName("FENDER FA-125 DREADNOUGHT WALNUT");
         offering.setPrice(12240.0);
         offering.setDescription("FENDER FA-125 DREADNOUGHT WALNUT Desc");

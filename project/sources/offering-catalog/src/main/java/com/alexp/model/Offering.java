@@ -3,7 +3,6 @@ package com.alexp.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.UUID;
 
@@ -11,15 +10,16 @@ import java.util.UUID;
 @Entity
 public class Offering {
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private UUID offeringId;
     private String name;
     private Double price;
     private String description;
-    private Integer available;
+    private Long available;
     private String status;
 
     public Offering() {
+        offeringId = UUID.randomUUID();
     }
 
     public UUID getOfferingId() {
@@ -54,11 +54,11 @@ public class Offering {
         this.description = description;
     }
 
-    public Integer getAvailable() {
+    public Long getAvailable() {
         return available;
     }
 
-    public void setAvailable(Integer available) {
+    public void setAvailable(Long available) {
         this.available = available;
     }
 
