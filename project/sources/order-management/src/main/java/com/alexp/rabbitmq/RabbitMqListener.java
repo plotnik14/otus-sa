@@ -4,6 +4,7 @@ import com.alexp.controller.OrderController;
 import com.alexp.model.ChangeStatusRequest;
 import com.alexp.model.OrderStatus;
 import com.alexp.rabbitmq.event.OrderStatusChangedEvent;
+import com.alexp.rabbitmq.event.PaymentEvent;
 import com.alexp.rabbitmq.event.ReservationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,5 +35,13 @@ public class RabbitMqListener {
         ChangeStatusRequest changeStatusRequest = new ChangeStatusRequest();
         changeStatusRequest.setStatus(OrderStatus.READY_FOR_PAYMENT.getName());
         orderController.changeOrderStatus(reservationEvent.getOrderId(),changeStatusRequest);
+    }
+
+    @RabbitListener(queues = "payment.om.queue")
+    public void receivePayment(PaymentEvent paymentEvent) {
+        LOGGER.debug("Message:{}", paymentEvent);
+        ChangeStatusRequest changeStatusRequest = new ChangeStatusRequest();
+        changeStatusRequest.setStatus(OrderStatus.READY_FOR_DELIVERY.getName());
+        orderController.changeOrderStatus(paymentEvent.getOrderId(), changeStatusRequest);
     }
 }

@@ -40,4 +40,19 @@ public class RabbitMqConfig {
     public Binding bindingReservation(Queue orderReservationQueue, TopicExchange orderReservationExchange) {
         return BindingBuilder.bind(orderReservationQueue).to(orderReservationExchange).with("order.reservation.*");
     }
+
+    @Bean
+    public Queue paymentQueue() {
+        return new Queue("payment.om.queue", false);
+    }
+
+    @Bean
+    public TopicExchange paymentExchange() {
+        return new TopicExchange("payment.exchange");
+    }
+
+    @Bean
+    public Binding bindingPayment(Queue paymentQueue, TopicExchange paymentExchange) {
+        return BindingBuilder.bind(paymentQueue).to(paymentExchange).with("payment.*");
+    }
 }
