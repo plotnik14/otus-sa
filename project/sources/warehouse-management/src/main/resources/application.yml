@@ -5,7 +5,7 @@ server:
 
 spring:
   rabbitmq:
-    host: localhost
+    host: rabbitmq.otus-app.svc
     port: 5672
     username: user
     password: xXRKnyKZ5N
