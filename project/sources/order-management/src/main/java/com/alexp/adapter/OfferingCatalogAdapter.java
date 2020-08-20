@@ -9,7 +9,7 @@ import java.util.UUID;
 @Service
 public class OfferingCatalogAdapter {
 
-    private static final String OFFERING_CATALOG_URL = "localhost:8001";
+    private static final String OFFERING_CATALOG_URL = "offering-catalog:9000";
 
     private final RestTemplate restTemplate;
 
