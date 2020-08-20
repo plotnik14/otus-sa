@@ -18,6 +18,7 @@ public class Session {
     private String email;
     private String firstName;
     private String lastName;
+    private String role;
     private Timestamp createdWhen;
 
     public Session() {
@@ -85,5 +86,28 @@ public class Session {
 
     public void setCreatedWhen(Timestamp createdWhen) {
         this.createdWhen = createdWhen;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId=" + sessionId +
+                ", userId=" + userId +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", role='" + role + '\'' +
+                ", createdWhen=" + createdWhen +
+                '}';
     }
 }

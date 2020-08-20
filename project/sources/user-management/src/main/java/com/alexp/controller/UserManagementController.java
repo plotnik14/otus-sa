@@ -1,11 +1,9 @@
 package com.alexp.controller;
 
-import com.alexp.model.Response;
 import com.alexp.model.User;
 import com.alexp.repositoriy.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -18,24 +16,25 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/v1/users")
 public class UserManagementController {
 
-    private Logger logger = LoggerFactory.getLogger(UserManagementController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(UserManagementController.class);
 
-    private RestTemplate restTemplate;
-    private UserRepository userRepository;
+    private final RestTemplate restTemplate;
+    private final UserRepository userRepository;
 
     public UserManagementController(RestTemplate restTemplate, UserRepository userRepository) {
         this.restTemplate = restTemplate;
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable("userId") String userId, HttpServletRequest httpServletRequest) {
         User user = userRepository.findById(UUID.fromString(userId)).orElse(null);
 
@@ -50,7 +49,7 @@ public class UserManagementController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/users/{userId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable("userId") String userId, @RequestBody User user, HttpServletRequest httpServletRequest){
         User userForUpdate = userRepository.findById(UUID.fromString(userId)).orElse(null);
         if (userForUpdate == null){
@@ -69,20 +68,25 @@ public class UserManagementController {
         return new ResponseEntity<>(userForUpdate, HttpStatus.OK);
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        user.setRole("User");
+
+        if (user.getUserId() == null){
+            user.setUserId(UUID.randomUUID()); //hack for testing
+        }
+
         userRepository.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/health")
-    public Response healthCheck() {
-        return new Response("OK");
-    }
-
     private boolean authorizedUser(HttpServletRequest httpServletRequest, String userId) {
+        if (true) { // ToDO DELETE!!!!!!!!!!!!!!!!!!!
+            return true;
+        }
+
         if (httpServletRequest.getCookies() == null){
-            logger.debug("cookies are null");
+            LOGGER.debug("cookies are null");
             return false;
         }
 
@@ -93,24 +97,23 @@ public class UserManagementController {
                 .orElse(null);
 
         if (sessionIdCookie == null){
-            logger.debug("sessionId hasn't been found in cookies:{}", cookies);
+            LOGGER.debug("sessionId hasn't been found in cookies:{}", cookies);
             return false;
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.COOKIE, "sessionId="+sessionIdCookie.getValue());
 
-        logger.debug("before rest to auth");
+        LOGGER.debug("before rest to auth");
 
         // ToDo move url to ENV
         ResponseEntity<Object> responseEntity = restTemplate.exchange("http://auth:9000/auth", HttpMethod.GET, new HttpEntity<>(httpHeaders), Object.class);
 
-        logger.debug("after rest to auth");
+        LOGGER.debug("after rest to auth");
 
         String userIdHeader = responseEntity.getHeaders().get("X-UserId").get(0);
 
         return userIdHeader.equals(userId);
     }
-
 
 }

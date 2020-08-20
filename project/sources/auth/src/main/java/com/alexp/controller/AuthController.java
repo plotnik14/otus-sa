@@ -25,13 +25,11 @@ import java.util.*;
 
 @RestController
 public class AuthController {
+    private final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
-    private Logger logger = LoggerFactory.getLogger(AuthController.class);
-
-    private RestTemplate restTemplate;
-
-    private AuthUserRepository authUserRepository;
-    private SessionRepository sessionRepository;
+    private final RestTemplate restTemplate;
+    private final AuthUserRepository authUserRepository;
+    private final SessionRepository sessionRepository;
 
     public AuthController(RestTemplate restTemplate, AuthUserRepository authUserRepository, SessionRepository sessionRepository) {
         this.restTemplate = restTemplate;
@@ -47,6 +45,7 @@ public class AuthController {
         user.setEmail(request.getEmail());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
+        user.setRole("User");
 
         AuthUser existingUser = authUserRepository.findByLogin(user.getLogin());
         if (existingUser != null) {
@@ -65,7 +64,7 @@ public class AuthController {
 
     private void createUserInUM(AuthUser user){
         // ToDo move url to ENV
-        restTemplate.postForEntity("http://user-management:9000/users", user, Object.class);
+        restTemplate.postForEntity("http://user-management:9000/api/v1/users", user, Object.class);
     }
 
     @PostMapping("/login")
@@ -96,7 +95,7 @@ public class AuthController {
     @GetMapping("/auth")
     public ResponseEntity<Response> auth(HttpServletRequest httpServletRequest) {
         if (httpServletRequest.getCookies() == null) {
-            logger.debug("cookies are null");
+            LOGGER.debug("cookies are null");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -107,7 +106,7 @@ public class AuthController {
                 .orElse(null);
 
         if (sessionIdCookie == null){
-            logger.debug("sessionId hasn't been found in cookies:{}", cookies);
+            LOGGER.debug("sessionId hasn't been found in cookies:{}", cookies);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -115,7 +114,7 @@ public class AuthController {
         Session session = sessionRepository.findById(UUID.fromString(sessionId)).orElse(null);
 
         if (session == null) {
-            logger.debug("Session with this id:{} doesn't exist", sessionId);
+            LOGGER.debug("Session with this id:{} doesn't exist", sessionId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -127,11 +126,12 @@ public class AuthController {
         httpHeaders.add("X-Email", session.getEmail());
         httpHeaders.add("X-First-Name", session.getFirstName());
         httpHeaders.add("X-Last-Name", session.getLastName());
+        httpHeaders.add("X-Role", session.getRole());
 
         Response response = new Response();
         response.setId(session.getUserId().toString());
 
-        logger.debug("Headers added");
+        LOGGER.debug("Headers added");
 
         return new ResponseEntity<Response>(response, httpHeaders, HttpStatus.OK);
     }
@@ -193,6 +193,7 @@ public class AuthController {
         session.setEmail(user.getEmail());
         session.setFirstName(user.getFirstName());
         session.setLastName(user.getLastName());
+        session.setRole(user.getRole());
         session.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
         Session createdSession = sessionRepository.save(session);
         return createdSession.getSessionId().toString();
