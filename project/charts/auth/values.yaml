@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: plotnikov93av/otus-auth
+  repository: otus-auth
   pullPolicy: IfNotPresent
 
 service:

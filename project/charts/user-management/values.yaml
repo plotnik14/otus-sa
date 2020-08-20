@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: plotnikov93av/otus-user-management
+  repository: otus-user-management
   pullPolicy: IfNotPresent
 
 service:
