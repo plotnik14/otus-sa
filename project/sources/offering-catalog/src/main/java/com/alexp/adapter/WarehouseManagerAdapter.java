@@ -12,7 +12,7 @@ import java.util.UUID;
 public class WarehouseManagerAdapter {
     private final static Logger LOGGER = LoggerFactory.getLogger(WarehouseManagerAdapter.class);
 
-    private static final String WAREHOUSE_MANAGEMENT_URL = "localhost:8002";
+    private static final String WAREHOUSE_MANAGEMENT_URL = "warehouse-management:9000";
 
     private final RestTemplate restTemplate;
 
