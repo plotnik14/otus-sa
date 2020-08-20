@@ -2,6 +2,7 @@ package com.alexp.rabbitmq;
 
 import com.alexp.adapter.MailAgentAdapter;
 import com.alexp.adapter.UserManagementAdapter;
+import com.alexp.model.OrderStatus;
 import com.alexp.model.User;
 import com.alexp.rabbitmq.event.OrderStatusChangedEvent;
 import org.slf4j.Logger;
@@ -23,14 +24,16 @@ public class RabbitMqListener {
         this.mailAgentAdapter = mailAgentAdapter;
     }
 
-    @RabbitListener(queues = "order.status.om.queue")
+    @RabbitListener(queues = "order.status.ns.queue")
     public void receiveOrder(OrderStatusChangedEvent orderStatusChangedEvent) {
         LOGGER.debug("Message:{}", orderStatusChangedEvent);
-        User user = userManagementAdapter.getUserById(orderStatusChangedEvent.getCustomerId());
-        mailAgentAdapter.sendEmail(
-                user.getEmail(),
-                user.getFirstName()+" "+user.getLastName(),
-                orderStatusChangedEvent.getOrderName()
-        );
+        if (OrderStatus.READY_FOR_DELIVERY.getName().equals(orderStatusChangedEvent.getNewStatus())) {
+            User user = userManagementAdapter.getUserById(orderStatusChangedEvent.getCustomerId());
+            mailAgentAdapter.sendEmail(
+                    user.getEmail(),
+                    user.getFirstName() + " " + user.getLastName(),
+                    orderStatusChangedEvent.getOrderName()
+            );
+        }
     }
 }
