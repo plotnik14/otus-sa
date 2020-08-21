@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/offerings")
@@ -60,12 +61,17 @@ public class OfferingController {
     @GetMapping("/search")
     public ResponseEntity<List<Offering>> getOfferingsByParams(@RequestParam("query") String query) {
         List<Offering> offerings = offeringRepository.findAllByNameContains(query);
+
+        offerings = offerings.stream()
+                .filter(offering -> OfferingStatus.ACTIVE.getName().equals(offering.getStatus()))
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(offerings);
     }
 
     @PostMapping
     public ResponseEntity<Offering> createNewOffering(@RequestBody Offering offering) {
-        offering.setOfferingId(null);
+        offering.setOfferingId(UUID.randomUUID());
         offering.setStatus(OfferingStatus.IN_DEVELOPMENT.getName());
         Offering createdOffering = offeringRepository.save(offering);
         return ResponseEntity.ok(createdOffering);
