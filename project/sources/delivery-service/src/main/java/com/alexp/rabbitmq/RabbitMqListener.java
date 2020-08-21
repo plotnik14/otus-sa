@@ -22,7 +22,7 @@ public class RabbitMqListener {
     private final DeliveryTasksRepository deliveryTasksRepository;
 
     //ToDo update
-    private final UUID ALONE_COURIER_UUID = UUID.fromString("646d54b0-e142-11ea-87d0-0242ac130003");
+    private final UUID ALONE_COURIER_UUID = UUID.fromString("111e226e-e3e3-11ea-87d0-0242ac130003");
 
     public RabbitMqListener(UserManagementAdapter userManagementAdapter, DeliveryTasksRepository deliveryTasksRepository) {
         this.userManagementAdapter = userManagementAdapter;
@@ -31,14 +31,18 @@ public class RabbitMqListener {
 
     @RabbitListener(queues = "order.status.ds.queue")
     public void receiveOrder(OrderStatusChangedEvent orderStatusChangedEvent) {
-        LOGGER.debug("Message:{}", orderStatusChangedEvent);
-        if (OrderStatus.READY_FOR_DELIVERY.getName().equals(orderStatusChangedEvent.getNewStatus())) {
-            DeliveryTask deliveryTask = new DeliveryTask();
-            deliveryTask.setCourierId(ALONE_COURIER_UUID);
-            deliveryTask.setOrderId(orderStatusChangedEvent.getOrderId());
-            deliveryTask.setStatus("Open");
-            deliveryTask.setComment("Comment:" + orderStatusChangedEvent.getOrderName());
-            deliveryTasksRepository.save(deliveryTask);
+        try {
+            LOGGER.debug("Message:{}", orderStatusChangedEvent);
+            if (OrderStatus.READY_FOR_DELIVERY.getName().equals(orderStatusChangedEvent.getNewStatus())) {
+                DeliveryTask deliveryTask = new DeliveryTask();
+                deliveryTask.setCourierId(ALONE_COURIER_UUID);
+                deliveryTask.setOrderId(orderStatusChangedEvent.getOrderId());
+                deliveryTask.setStatus("Open");
+                deliveryTask.setComment("Comment:" + orderStatusChangedEvent.getOrderName());
+                deliveryTasksRepository.save(deliveryTask);
+            }
+        } catch (Exception e) {
+            LOGGER.error("receiveOrder error! ", e);
         }
     }
 }

@@ -1,10 +1,14 @@
 package com.alexp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.UUID;
 
 public class User {
     private UUID userId;
+    @JsonIgnore
     private String login;
+    @JsonIgnore
     private String password;
     private String email;
     private String firstName;

@@ -1,9 +1,9 @@
 package com.alexp.controller;
 
 import com.alexp.DeliveryTasksRepository;
-import com.alexp.model.ChangeStatusRequest;
-import com.alexp.model.DeliveryOption;
-import com.alexp.model.DeliveryTask;
+import com.alexp.adapter.OrderManagementAdapter;
+import com.alexp.adapter.UserManagementAdapter;
+import com.alexp.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +16,16 @@ import java.util.UUID;
 public class DeliveryController {
 
     private final DeliveryTasksRepository deliveryTasksRepository;
+    private final UserManagementAdapter userManagementAdapter;
+    private final OrderManagementAdapter orderManagementAdapter;
 
-    public DeliveryController(DeliveryTasksRepository deliveryTasksRepository) {
+
+    public DeliveryController(DeliveryTasksRepository deliveryTasksRepository,
+                              UserManagementAdapter userManagementAdapter,
+                              OrderManagementAdapter orderManagementAdapter) {
         this.deliveryTasksRepository = deliveryTasksRepository;
+        this.userManagementAdapter = userManagementAdapter;
+        this.orderManagementAdapter = orderManagementAdapter;
         initDB();
     }
 
@@ -37,14 +44,21 @@ public class DeliveryController {
     }
 
     @GetMapping("deliveryTasks/{taskId}")
-    public ResponseEntity<DeliveryTask> getDeliveryTaskDetails(@PathVariable("taskId") UUID taskId){
+    public ResponseEntity<DeliveryTaskDetails> getDeliveryTaskDetails(@PathVariable("taskId") UUID taskId){
         DeliveryTask deliveryTask = deliveryTasksRepository.findById(taskId).orElse(null);
 
         if (deliveryTask == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(deliveryTask);
+        Order order = orderManagementAdapter.getOrderById(deliveryTask.getOrderId());
+        User customer = userManagementAdapter.getUserById(order.getCustomerId());
+
+        DeliveryTaskDetails deliveryTaskDetails = new DeliveryTaskDetails(deliveryTask);
+        deliveryTaskDetails.setOrder(order);
+        deliveryTaskDetails.setCustomer(customer);
+
+        return ResponseEntity.ok(deliveryTaskDetails);
     }
 
     @PostMapping("deliveryTasks/{taskId}")
