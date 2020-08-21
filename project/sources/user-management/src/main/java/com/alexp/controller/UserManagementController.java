@@ -70,8 +70,6 @@ public class UserManagementController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        user.setRole("User");
-
         if (user.getUserId() == null){
             user.setUserId(UUID.randomUUID()); //hack for testing
         }
@@ -106,7 +104,7 @@ public class UserManagementController {
 
         LOGGER.debug("before rest to auth");
 
-        // ToDo move url to ENV
+        // ToDo DO NOT SEND REQUEST. You already have all info
         ResponseEntity<Object> responseEntity = restTemplate.exchange("http://auth:9000/auth", HttpMethod.GET, new HttpEntity<>(httpHeaders), Object.class);
 
         LOGGER.debug("after rest to auth");
