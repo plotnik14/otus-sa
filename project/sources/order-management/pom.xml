@@ -9,7 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
-        <h2.database.version>1.4.199</h2.database.version>
+<!--        <h2.database.version>1.4.199</h2.database.version>-->
+        <postgresql.version>42.2.12</postgresql.version>
     </properties>
 
     <dependencies>
@@ -33,11 +34,16 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--            <version>${h2.database.version}</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-            <version>${h2.database.version}</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
     </dependencies>
 
