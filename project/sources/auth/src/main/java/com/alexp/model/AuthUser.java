@@ -1,14 +1,12 @@
 package com.alexp.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity
 public class AuthUser {
     @Id
-    @GeneratedValue
     private UUID userId;
     private String login;
     private String password;
@@ -18,6 +16,7 @@ public class AuthUser {
     private String role;
 
     public AuthUser() {
+        userId = UUID.randomUUID();
     }
 
     public UUID getUserId() {

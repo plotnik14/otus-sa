@@ -35,6 +35,7 @@ public class AuthController {
         this.restTemplate = restTemplate;
         this.authUserRepository = authUserRepository;
         this.sessionRepository = sessionRepository;
+        initUsers();
     }
 
     @PostMapping("/register")
@@ -89,7 +90,10 @@ public class AuthController {
         cookie.setPath("/");
         httpServletResponse.addCookie(cookie);
 
-        return new ResponseEntity<Response>(new Response("ok"), HttpStatus.OK);
+        Response response = new Response();
+        response.setId(user.getUserId().toString());
+
+        return new ResponseEntity<Response>(response, HttpStatus.OK);
     }
 
     @GetMapping("/auth")
@@ -197,5 +201,37 @@ public class AuthController {
         session.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
         Session createdSession = sessionRepository.save(session);
         return createdSession.getSessionId().toString();
+    }
+
+    public void initUsers() {
+        AuthUser user = new AuthUser();
+        user.setUserId(UUID.fromString("036d9622-e3e3-11ea-87d0-0242ac130003"));
+        user.setLogin("admin");
+        user.setPassword(securePassword("admin"));
+        user.setEmail("admin@admin.com");
+        user.setFirstName("Admin");
+        user.setLastName("Admin");
+        user.setRole("Admin");
+
+        AuthUser existingUser = authUserRepository.findByLogin(user.getLogin());
+        if (existingUser == null) {
+            AuthUser createdUser = authUserRepository.save(user);
+            createUserInUM(createdUser);
+        }
+
+        user = new AuthUser();
+        user.setUserId(UUID.fromString("111e226e-e3e3-11ea-87d0-0242ac130003"));
+        user.setLogin("courier");
+        user.setPassword(securePassword("courier"));
+        user.setEmail("courier@courier.com");
+        user.setFirstName("Courier");
+        user.setLastName("Courier");
+        user.setRole("Courier");
+
+        existingUser = authUserRepository.findByLogin(user.getLogin());
+        if (existingUser == null) {
+            AuthUser createdUser = authUserRepository.save(user);
+            createUserInUM(createdUser);
+        }
     }
 }
