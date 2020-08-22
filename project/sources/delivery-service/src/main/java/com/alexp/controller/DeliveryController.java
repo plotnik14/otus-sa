@@ -26,7 +26,6 @@ public class DeliveryController {
         this.deliveryTasksRepository = deliveryTasksRepository;
         this.userManagementAdapter = userManagementAdapter;
         this.orderManagementAdapter = orderManagementAdapter;
-        initDB();
     }
 
     @GetMapping("deliveryOptions")
@@ -77,39 +76,4 @@ public class DeliveryController {
 
         return ResponseEntity.ok(deliveryTask);
     }
-
-    private void initDB() {
-        List<DeliveryTask> deliveryTasks = new ArrayList<>();
-
-        DeliveryTask deliveryTask = new DeliveryTask();
-        deliveryTask.setCourierId(UUID.fromString("fe2310aa-e141-11ea-87d0-0242ac130003"));
-        deliveryTask.setOrderId(UUID.fromString("0f79f206-e142-11ea-87d0-0242ac130003"));
-        deliveryTask.setStatus("Open");
-        deliveryTask.setComment("Some text");
-        deliveryTasks.add(deliveryTask);
-
-        deliveryTask = new DeliveryTask();
-        deliveryTask.setCourierId(UUID.fromString("fe2310aa-e141-11ea-87d0-0242ac130003"));
-        deliveryTask.setOrderId(UUID.fromString("7b7685a2-4a39-4e0b-a86f-159b67e03287"));
-        deliveryTask.setStatus("Open");
-        deliveryTask.setComment("Some text");
-        deliveryTasks.add(deliveryTask);
-
-        deliveryTask = new DeliveryTask();
-        deliveryTask.setCourierId(UUID.fromString("fe2310aa-e141-11ea-87d0-0242ac130003"));
-        deliveryTask.setOrderId(UUID.fromString("599a13ca-e142-11ea-87d0-0242ac130003"));
-        deliveryTask.setStatus("Open");
-        deliveryTask.setComment("Some text");
-        deliveryTasks.add(deliveryTask);
-
-        deliveryTask = new DeliveryTask();
-        deliveryTask.setCourierId(UUID.fromString("6070ff9c-e142-11ea-87d0-0242ac130003"));
-        deliveryTask.setOrderId(UUID.fromString("646d54b0-e142-11ea-87d0-0242ac130003"));
-        deliveryTask.setStatus("Open");
-        deliveryTask.setComment("Some text");
-        deliveryTasks.add(deliveryTask);
-
-        deliveryTasksRepository.saveAll(deliveryTasks);
-    }
-
 }

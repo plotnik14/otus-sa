@@ -22,6 +22,22 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
+          env :   
+            - name : DATABASE_URL
+              valueFrom:
+                  secretKeyRef:
+                    name: ds-secret
+                    key: DATABASE_URL_JDBC
+            - name : POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: ds-config
+                  key: POSTGRES_USER
+            - name : POSTGRES_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: ds-secret
+                    key: POSTGRES_PASSWORD
           livenessProbe:
             httpGet:
               port: http
