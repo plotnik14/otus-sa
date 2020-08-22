@@ -16,3 +16,12 @@ ingress:
     - host: arch.homework
       paths:
         path: /auth-proxy($|/)(.*)
+
+postgresql:
+  enabled: true
+  postgresqlUsername: postgresuser
+  postgresqlPassword: postgrespass
+  postgresqlDatabase: postgresdb
+  service:
+    port: "5432"
+  fullnameOverride: postgres-auth
