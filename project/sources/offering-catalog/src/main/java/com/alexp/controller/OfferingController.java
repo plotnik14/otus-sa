@@ -27,7 +27,6 @@ public class OfferingController {
                               WarehouseManagerAdapter warehouseManagerAdapter) {
         this.offeringRepository = offeringRepository;
         this.warehouseManagerAdapter = warehouseManagerAdapter;
-        iniDB();
     }
 
     // Testing only
@@ -120,32 +119,5 @@ public class OfferingController {
         offeringToUpdate = offeringRepository.save(offeringToUpdate);
 
         return ResponseEntity.ok(offeringToUpdate);
-    }
-
-
-    private void iniDB() {
-        Offering offering = new Offering();
-        offering.setOfferingId(UUID.fromString("8d68f7be-e24d-11ea-87d0-0242ac130003"));
-        offering.setName("VESTON F-38/BK");
-        offering.setPrice(6400.0);
-        offering.setDescription("VESTON F-38/BK Desc");
-        offering.setStatus(OfferingStatus.ACTIVE.getName());
-        offeringRepository.save(offering);
-
-        offering = new Offering();
-        offering.setOfferingId(UUID.fromString("995b0cba-e24d-11ea-87d0-0242ac130003"));
-        offering.setName("MARTIN LX BLACK");
-        offering.setPrice(38990.0);
-        offering.setDescription("MARTIN LX BLACK Desc");
-        offering.setStatus(OfferingStatus.ACTIVE.getName());
-        offeringRepository.save(offering);
-
-        offering = new Offering();
-        offering.setOfferingId(UUID.fromString("9f4bb246-e24d-11ea-87d0-0242ac130003"));
-        offering.setName("FENDER FA-125 DREADNOUGHT WALNUT");
-        offering.setPrice(12240.0);
-        offering.setDescription("FENDER FA-125 DREADNOUGHT WALNUT Desc");
-        offering.setStatus(OfferingStatus.ACTIVE.getName());
-        offeringRepository.save(offering);
     }
 }

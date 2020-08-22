@@ -18,3 +18,12 @@ ingress:
     - host: arch.homework
       paths:
         path: /offering-catalog($|/)(.*)
+
+postgresql:
+  enabled: true
+  postgresqlUsername: postgresuser
+  postgresqlPassword: postgrespass
+  postgresqlDatabase: postgresdb
+  service:
+    port: "5432"
+  fullnameOverride: postgres-oc
