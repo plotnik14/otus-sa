@@ -1,6 +1,9 @@
 package com.alexp.adapter;
 
 import com.alexp.model.User;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,10 +20,18 @@ public class UserManagementAdapter {
     }
 
     public User getUserById(UUID userId) {
-        User user = restTemplate.getForObject(
-                "http://"+ USER_MANAGEMENT_URL +"/api/v1/users/"+userId,
-                User.class
-        );
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("X-UserId", "notification-service");
+        httpHeaders.add("X-Role", "Application");
+        HttpEntity request = new HttpEntity(httpHeaders);
+        User user = restTemplate.exchange(
+                "http://"+ USER_MANAGEMENT_URL +"/api/v1/users/{userId}",
+                HttpMethod.GET,
+                request,
+                User.class,
+                userId
+        ).getBody();
+
         return user;
     }
 }
