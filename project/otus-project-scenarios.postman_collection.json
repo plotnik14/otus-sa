@@ -1,0 +1,2177 @@
+{
+	"info": {
+		"_postman_id": "77cd0fd9-5361-4c85-a785-e52529985714",
+		"name": "otus-project-scenarios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Buying product e2e",
+			"item": [
+				{
+					"name": "Register user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1af6124f-27a5-4a35-802b-e1d86aac73d1",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9b84c420-9f3f-409b-a387-bcad37444d6b",
+								"exec": [
+									"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))\r",
+									"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))\r",
+									"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))\r",
+									"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))\r",
+									"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"firstName\":\"{{firstName}}\",\r\n    \"lastName\":\"{{lastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/register",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f9613d34-10df-4e53-9fbb-fae756d327df",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search offerings by query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "90ffa762-7982-4db0-88c8-0f9dbbf43894",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"offeringId\", responseJSON[0].offeringId)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/search?query=FENDER",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "FENDER"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get offering details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/{{offeringId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings",
+								"{{offeringId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "553bc9a4-a312-4855-aef1-169449685698",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderId\", responseJSON[\"orderId\"])\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9e17df8c-c0f4-4de8-985b-8a25c510a990",
+								"exec": [
+									"pm.collectionVariables.set(\"requestId\", pm.variables.replaceIn('{{$guid}}'))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Request-Id",
+								"value": "{{requestId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"customerId\":\"{{userId}}\",\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add order item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a0ee9d6-4753-4c00-a19f-5fcbb4dc2371",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"offeringId\":\"{{offeringId}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/items?orderVersion={{orderVersion}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"items"
+							],
+							"query": [
+								{
+									"key": "orderVersion",
+									"value": "{{orderVersion}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change order status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "102ec5cc-6ac4-48c9-8709-05fd19a6a17b",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"status\":\"Submitted\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/changeStatus?orderVersion={{orderVersion}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"changeStatus"
+							],
+							"query": [
+								{
+									"key": "orderVersion",
+									"value": "{{orderVersion}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check order status (Ready for payment)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e0460e9c-ca3c-4cd4-be6d-8d93c728907a",
+								"exec": [
+									"setTimeout(function(){}, [3000]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Emulate payment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f7b0ae74-6ab6-4540-a623-7557bd6ba138",
+								"exec": [
+									"setTimeout(function(){}, [3000]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/payment-service/api/v1/payment/emulate/{{orderId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"v1",
+								"payment",
+								"emulate",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check order status (Ready for delivery)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "201fdb7b-1873-49de-8f38-81863e186a57",
+								"exec": [
+									"setTimeout(function(){}, [3000]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get delivery tasks for courier",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a5e73020-bc89-419e-b43d-4720eb5d2916",
+								"exec": [
+									"setTimeout(function(){}, [3000]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks?courierId={{defaultCourierId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"delivery-service",
+								"api",
+								"v1",
+								"deliveryTasks"
+							],
+							"query": [
+								{
+									"key": "courierId",
+									"value": "{{defaultCourierId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "User profile A&A",
+			"item": [
+				{
+					"name": "Register user 1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5c2095d4-6f8b-4137-b89e-5467cb6f543b",
+								"exec": [
+									"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))\r",
+									"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))\r",
+									"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))\r",
+									"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))\r",
+									"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0716f9ca-5790-4310-8e2a-3772072d767e",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId_1\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"firstName\":\"{{firstName}}\",\r\n    \"lastName\":\"{{lastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/register",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user 1 data. Failed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0e8d97af-35b5-41f7-8844-94bf4c508a74",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user 1. Failed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fce73ea6-8cf2-4e86-becd-652fd36a5876",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"newName\",\r\n    \"lastName\":\"newLastName\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user 1. Successful",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"newName\",\r\n    \"lastName\":\"newLastName\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user 1 data. Successful",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order user1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "553bc9a4-a312-4855-aef1-169449685698",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderId\", responseJSON[\"orderId\"])\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "65c2a177-c7bb-4c57-8e83-01eb9123d46c",
+								"exec": [
+									"pm.collectionVariables.set(\"requestId\", pm.variables.replaceIn('{{$guid}}'))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Request-Id",
+								"value": "{{requestId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"customerId\":\"{{userId_1}}\",\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user 1 orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders?customerId={{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "{{userId_1}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout user 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register user 2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2c9f7d01-d80e-4bab-9990-817c56e5bfcc",
+								"exec": [
+									"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))\r",
+									"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))\r",
+									"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))\r",
+									"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))\r",
+									"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "5806f98e-e84e-49eb-b917-ee2a4f6898f4",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId_2\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"firstName\":\"{{firstName}}\",\r\n    \"lastName\":\"{{lastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/register",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user 1 data. Failed for user 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8ae23089-0d2b-4b25-96a7-85d002f5626f",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user 1. Failed for user 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4afd8c58-1e6f-4c76-9008-1fc0aaa91dad",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"newName\",\r\n    \"lastName\":\"newLastName\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "72bcbb85-ecea-4eda-a24d-f6aa8ecc4f26",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{adminLogin}}\",\r\n    \"password\":\"{{adminPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user 1 data. Successful",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId_1}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "New product",
+			"item": [
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "72bcbb85-ecea-4eda-a24d-f6aa8ecc4f26",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{adminLogin}}\",\r\n    \"password\":\"{{adminPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get profile info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new offering",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "444fbfec-79e8-4389-b6c3-88467392ca2d",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"offeringId\", responseJSON[\"offeringId\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"My new offering\",\r\n        \"price\": 0.0,\r\n        \"description\": \"For demo\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update offering",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"price\": 120.0\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/{{offeringId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings",
+								"{{offeringId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change offering status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"status\":\"Active\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/{{offeringId}}/changeStatus",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings",
+								"{{offeringId}}",
+								"changeStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "72bcbb85-ecea-4eda-a24d-f6aa8ecc4f26",
+								"exec": [
+									"//var responseJSON = JSON.parse(responseBody)\r",
+									"//pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "553bc9a4-a312-4855-aef1-169449685698",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderId\", responseJSON[\"orderId\"])\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "226c4f85-22eb-46d3-a9d8-887c4430cf89",
+								"exec": [
+									"pm.collectionVariables.set(\"requestId\", pm.variables.replaceIn('{{$guid}}'))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Request-Id",
+								"value": "{{requestId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"customerId\":\"{{userId}}\",\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add order item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a0ee9d6-4753-4c00-a19f-5fcbb4dc2371",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"offeringId\":\"{{offeringId}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/items?orderVersion={{orderVersion}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"items"
+							],
+							"query": [
+								{
+									"key": "orderVersion",
+									"value": "{{orderVersion}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new offering as User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "444fbfec-79e8-4389-b6c3-88467392ca2d",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"My new offering\",\r\n        \"price\": 0.0,\r\n        \"description\": \"For demo\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Delivery tasks",
+			"item": [
+				{
+					"name": "Login as Courier",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "72bcbb85-ecea-4eda-a24d-f6aa8ecc4f26",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{courierLogin}}\",\r\n    \"password\":\"{{courierPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get profile info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/user-management/api/v1/users/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user-management",
+								"api",
+								"v1",
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get delivery tasks for courier",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a0902a85-a8c6-4aa4-92c0-bbb10ae0c6d2",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"taskId\", responseJSON[0].taskId)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks?courierId={{userId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"delivery-service",
+								"api",
+								"v1",
+								"deliveryTasks"
+							],
+							"query": [
+								{
+									"key": "courierId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get delivery task details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks/{{taskId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"delivery-service",
+								"api",
+								"v1",
+								"deliveryTasks",
+								"{{taskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change delivery task status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\":\"In Progress\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks/{{taskId}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"delivery-service",
+								"api",
+								"v1",
+								"deliveryTasks",
+								"{{taskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Idempotence",
+			"item": [
+				{
+					"name": "Register user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1af6124f-27a5-4a35-802b-e1d86aac73d1",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9b84c420-9f3f-409b-a387-bcad37444d6b",
+								"exec": [
+									"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))\r",
+									"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))\r",
+									"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))\r",
+									"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))\r",
+									"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"firstName\":\"{{firstName}}\",\r\n    \"lastName\":\"{{lastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/register",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f9613d34-10df-4e53-9fbb-fae756d327df",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"userId\", responseJSON[\"id\"])"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login\":\"{{login}}\",\r\n    \"password\":\"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/login",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search offerings by query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "90ffa762-7982-4db0-88c8-0f9dbbf43894",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"offeringId\", responseJSON[0].offeringId)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/search?query=FENDER",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"offering-catalog",
+								"api",
+								"v1",
+								"offerings",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "FENDER"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "553bc9a4-a312-4855-aef1-169449685698",
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"orderId\", responseJSON[\"orderId\"])\r",
+									"pm.collectionVariables.set(\"orderVersion\", responseJSON[\"version\"])"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9e17df8c-c0f4-4de8-985b-8a25c510a990",
+								"exec": [
+									"pm.collectionVariables.set(\"requestId\", pm.variables.replaceIn('{{$guid}}'))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Request-Id",
+								"value": "{{requestId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"customerId\":\"{{userId}}\",\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "553bc9a4-a312-4855-aef1-169449685698",
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {\r",
+									"  pm.response.to.have.status(409);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9e17df8c-c0f4-4de8-985b-8a25c510a990",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Request-Id",
+								"type": "text",
+								"value": "{{requestId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"customerId\":\"{{userId}}\",\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add order item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a0ee9d6-4753-4c00-a19f-5fcbb4dc2371",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"offeringId\":\"{{offeringId}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/items?orderVersion={{orderVersion}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"items"
+							],
+							"query": [
+								{
+									"key": "orderVersion",
+									"value": "{{orderVersion}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add order item 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a0ee9d6-4753-4c00-a19f-5fcbb4dc2371",
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {\r",
+									"  pm.response.to.have.status(409);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"offeringId\":\"{{offeringId}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/items?orderVersion={{orderVersion}}",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order-management",
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"items"
+							],
+							"query": [
+								{
+									"key": "orderVersion",
+									"value": "{{orderVersion}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{baseUrl}}/auth-proxy/logout",
+							"protocol": "http",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth-proxy",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "74ec007b-9dde-4236-8290-856954a24086",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "538a570c-de57-46d5-9916-a78eb9201d6c",
+				"type": "text/javascript",
+				"exec": [
+					"tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "36d2dee6-f487-4fbf-896b-746ba8ceddef",
+			"key": "login",
+			"value": ""
+		},
+		{
+			"id": "1a1d273a-388c-4dcc-b615-667458187990",
+			"key": "password",
+			"value": ""
+		},
+		{
+			"id": "09f27e0e-e0c7-4025-9546-10c6e2f9189e",
+			"key": "email",
+			"value": ""
+		},
+		{
+			"id": "f993e96c-d448-4f25-a12e-013cccab54fb",
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"id": "c9c7df84-6a1c-49d5-bf1f-34bd9f27041e",
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"id": "db2689a9-28e6-407b-9527-d398b7968bff",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		},
+		{
+			"id": "015871ed-5864-4281-b435-8c8248005fda",
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"id": "4345255c-f876-406b-891b-9eec631c7962",
+			"key": "offeringId",
+			"value": "9f4bb246-e24d-11ea-87d0-0242ac130003"
+		},
+		{
+			"id": "9e4dc0ad-a01f-47d7-81b3-14061f24c4c0",
+			"key": "defaultCourierId",
+			"value": "111e226e-e3e3-11ea-87d0-0242ac130003"
+		},
+		{
+			"id": "e3809d5c-1257-4114-a12e-bc5843ee0a90",
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"id": "02031ef4-5cdc-45a3-817f-49ef0cc5f7ca",
+			"key": "adminLogin",
+			"value": "admin"
+		},
+		{
+			"id": "b0eb906b-7763-451d-8f0e-788ef713a514",
+			"key": "adminPassword",
+			"value": "admin"
+		},
+		{
+			"id": "a8a52e30-62ee-4fdb-b67c-5c2bc89a191b",
+			"key": "courierLogin",
+			"value": "courier"
+		},
+		{
+			"id": "6f62fe8b-1ea3-4d57-a2c3-c33832c3457e",
+			"key": "courierPassword",
+			"value": "courier"
+		},
+		{
+			"id": "433563a4-6c8d-4179-bb89-7b7b02212513",
+			"key": "taskId",
+			"value": ""
+		},
+		{
+			"id": "1186f775-6aeb-40b5-bb1f-d9fe59bae49c",
+			"key": "address",
+			"value": "Lenina 3"
+		},
+		{
+			"id": "18e027e2-c7de-4b2f-9329-b25d314b89c0",
+			"key": "paymentMethod",
+			"value": "Credit Card"
+		},
+		{
+			"id": "0e870d37-68df-4f73-8ac1-2aadc7fe7948",
+			"key": "userId_1",
+			"value": ""
+		},
+		{
+			"id": "9fbb7524-3ab5-4a8c-a395-075f8208c593",
+			"key": "userId_2",
+			"value": ""
+		},
+		{
+			"id": "18d94986-b28e-484c-a1b1-d945d267ab8e",
+			"key": "requestId",
+			"value": ""
+		},
+		{
+			"id": "1b97a085-5288-4326-82b2-545d12dc403c",
+			"key": "orderVersion",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
