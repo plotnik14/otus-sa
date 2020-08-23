@@ -11,6 +11,7 @@
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
 <!--        <h2.database.version>1.4.199</h2.database.version>-->
         <postgresql.version>42.2.12</postgresql.version>
+        <micrometer.version>1.5.1</micrometer.version>
     </properties>
 
     <dependencies>
@@ -34,6 +35,11 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.h2database</groupId>-->
 <!--            <artifactId>h2</artifactId>-->
@@ -44,6 +50,16 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
         </dependency>
     </dependencies>
 

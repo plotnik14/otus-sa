@@ -21,6 +21,25 @@ spring:
       connectionTimeout: 20000
       maximumPoolSize: 5
 
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles:
+        user.requests: 0.5, 0.95, 0.99
+      percentiles-histogram[order.management.requests]: true
+
 logging:
   level:
     com.alexp: debug

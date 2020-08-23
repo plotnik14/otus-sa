@@ -19,6 +19,10 @@ ingress:
       paths:
         path: /order-management($|/)(.*)
 
+metrics:
+    serviceMonitor:
+      enabled: true
+
 postgresql:
   enabled: true
   postgresqlUsername: postgresuser

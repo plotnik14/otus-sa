@@ -6,6 +6,7 @@ import com.alexp.rabbitmq.RabbitMessagingService;
 import com.alexp.rabbitmq.event.OrderStatusChangedEvent;
 import com.alexp.repository.OrderItemsRepository;
 import com.alexp.repository.OrderRepository;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Timed(value = "order.management.requests")
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController {
