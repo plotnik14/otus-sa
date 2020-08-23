@@ -1,11 +1,8 @@
 package com.alexp.controller;
 
-import com.alexp.adapter.WarehouseManagerAdapter;
-import com.alexp.model.AvailabilityCheckResult;
 import com.alexp.model.ChangeStatusRequest;
 import com.alexp.model.Offering;
-import com.alexp.model.OfferingStatus;
-import com.alexp.repository.OfferingRepository;
+import com.alexp.service.OfferingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,58 +12,34 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/offerings")
 public class OfferingController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingController.class);
 
-    private final OfferingRepository offeringRepository;
-    private final WarehouseManagerAdapter warehouseManagerAdapter;
+    private final OfferingService offeringService;
 
-    public OfferingController(OfferingRepository offeringRepository,
-                              WarehouseManagerAdapter warehouseManagerAdapter) {
-        this.offeringRepository = offeringRepository;
-        this.warehouseManagerAdapter = warehouseManagerAdapter;
+    public OfferingController(OfferingService offeringService) {
+        this.offeringService = offeringService;
     }
 
     // Testing only
     @GetMapping
     public ResponseEntity<Iterable<Offering>> getAllOfferings() {
-        Iterable<Offering> offerings = offeringRepository.findAll();
+        Iterable<Offering> offerings = offeringService.findAll();
         return ResponseEntity.ok(offerings);
     }
 
     @GetMapping("/{offeringId}")
     public ResponseEntity<Offering> getOffering(@PathVariable("offeringId") UUID offeringId) {
-        Offering offering = offeringRepository.findById(offeringId).orElse(null);
-
-        if (offering == null){
-            return ResponseEntity.notFound().build();
-        }
-
-        AvailabilityCheckResult availabilityCheckResult = warehouseManagerAdapter.checkOfferingAvailability(offeringId);
-
-        LOGGER.debug("AvailabilityCheckResult:{}", availabilityCheckResult);
-
-        if(availabilityCheckResult == null) {
-            offering.setAvailable(0L);
-        } else {
-            offering.setAvailable(availabilityCheckResult.getTotalCount());
-        }
-
+        Offering offering = offeringService.findById(offeringId);
         return ResponseEntity.ok(offering);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<Offering>> getOfferingsByParams(@RequestParam("query") String query) {
-        List<Offering> offerings = offeringRepository.findAllByNameContains(query);
-
-        offerings = offerings.stream()
-                .filter(offering -> OfferingStatus.ACTIVE.getName().equals(offering.getStatus()))
-                .collect(Collectors.toList());
-
+        List<Offering> offerings = offeringService.findByQuery(query);
         return ResponseEntity.ok(offerings);
     }
 
@@ -77,9 +50,7 @@ public class OfferingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        offering.setOfferingId(UUID.randomUUID());
-        offering.setStatus(OfferingStatus.IN_DEVELOPMENT.getName());
-        Offering createdOffering = offeringRepository.save(offering);
+        Offering createdOffering = offeringService.createOffering(offering);
         return ResponseEntity.ok(createdOffering);
     }
 
@@ -91,16 +62,11 @@ public class OfferingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Offering offering = offeringRepository.findById(offeringId).orElse(null);
+        Offering offering = offeringService.changeOfferingStatus(offeringId, changeStatusRequest.getStatus());
 
         if (offering == null){
             return ResponseEntity.notFound().build();
         }
-
-        // ToDo Transition validation
-
-        offering.setStatus(changeStatusRequest.getStatus());
-        offering = offeringRepository.save(offering);
 
         return ResponseEntity.ok(offering);
     }
@@ -113,29 +79,13 @@ public class OfferingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Offering offeringToUpdate = offeringRepository.findById(offeringId).orElse(null);
+        Offering updatedOffering = offeringService.updateOffering(offeringId, offering);
 
-        if (offeringToUpdate == null){
+        if (updatedOffering == null){
             return ResponseEntity.notFound().build();
         }
 
-        // ToDo status validation
-
-        if (offering.getName() != null) {
-            offeringToUpdate.setName(offering.getName());
-        }
-
-        if (offering.getDescription() != null) {
-            offeringToUpdate.setDescription(offering.getDescription());
-        }
-
-        if (offering.getPrice() != null) {
-            offeringToUpdate.setPrice(offering.getPrice());
-        }
-
-        offeringToUpdate = offeringRepository.save(offeringToUpdate);
-
-        return ResponseEntity.ok(offeringToUpdate);
+        return ResponseEntity.ok(updatedOffering);
     }
 
     private boolean authorizedUser(HttpServletRequest httpServletRequest) {

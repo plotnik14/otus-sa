@@ -12,6 +12,7 @@
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
         <!--        <h2.database.version>1.4.199</h2.database.version>-->
         <postgresql.version>42.2.12</postgresql.version>
+<!--        <jedis.version>3.3.0</jedis.version>-->
     </properties>
 
     <dependencies>
@@ -30,6 +31,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>com.h2database</groupId>-->
         <!--            <artifactId>h2</artifactId>-->
@@ -41,6 +47,11 @@
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>redis.clients</groupId>-->
+<!--            <artifactId>jedis</artifactId>-->
+<!--            <version>${jedis.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

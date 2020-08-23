@@ -15,6 +15,14 @@ spring:
     hikari:
       connectionTimeout: 20000
       maximumPoolSize: 5
+  cache:
+    type: redis
+    redis:
+      time-to-live: 10m
+  redis:
+    host: redis-master.otus-app.svc.cluster.local
+    port: 6379
+    password: password
 
 logging:
   level:
