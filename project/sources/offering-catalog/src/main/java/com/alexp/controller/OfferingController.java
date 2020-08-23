@@ -8,9 +8,11 @@ import com.alexp.model.OfferingStatus;
 import com.alexp.repository.OfferingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -69,7 +71,12 @@ public class OfferingController {
     }
 
     @PostMapping
-    public ResponseEntity<Offering> createNewOffering(@RequestBody Offering offering) {
+    public ResponseEntity<Offering> createNewOffering(@RequestBody Offering offering,
+                                                      HttpServletRequest httpServletRequest) {
+        if (!authorizedUser(httpServletRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         offering.setOfferingId(UUID.randomUUID());
         offering.setStatus(OfferingStatus.IN_DEVELOPMENT.getName());
         Offering createdOffering = offeringRepository.save(offering);
@@ -78,7 +85,12 @@ public class OfferingController {
 
     @PostMapping("/{offeringId}/changeStatus")
     public ResponseEntity<Offering> changeOfferingStatus(@PathVariable("offeringId") UUID offeringId,
-                                                         @RequestBody ChangeStatusRequest changeStatusRequest) {
+                                                         @RequestBody ChangeStatusRequest changeStatusRequest,
+                                                         HttpServletRequest httpServletRequest) {
+        if (!authorizedUser(httpServletRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         Offering offering = offeringRepository.findById(offeringId).orElse(null);
 
         if (offering == null){
@@ -95,7 +107,12 @@ public class OfferingController {
 
     @PutMapping("/{offeringId}")
     public ResponseEntity<Offering> updateOffering(@PathVariable("offeringId") UUID offeringId,
-                                                   @RequestBody Offering offering) {
+                                                   @RequestBody Offering offering,
+                                                   HttpServletRequest httpServletRequest) {
+        if (!authorizedUser(httpServletRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         Offering offeringToUpdate = offeringRepository.findById(offeringId).orElse(null);
 
         if (offeringToUpdate == null){
@@ -119,5 +136,15 @@ public class OfferingController {
         offeringToUpdate = offeringRepository.save(offeringToUpdate);
 
         return ResponseEntity.ok(offeringToUpdate);
+    }
+
+    private boolean authorizedUser(HttpServletRequest httpServletRequest) {
+        String userIdFromHeader = httpServletRequest.getHeader("X-UserId");
+        String role = httpServletRequest.getHeader("X-Role");
+
+        LOGGER.debug("userIdFromHeader:{}", userIdFromHeader);
+        LOGGER.debug("role:{}", role);
+
+        return role.equals("Admin");
     }
 }
