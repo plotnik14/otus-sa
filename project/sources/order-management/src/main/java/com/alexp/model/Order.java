@@ -22,6 +22,7 @@ public class Order {
     private String status;
     private String deliveryAddress;
     private String paymentMethod;
+    private Long version;
 
     @OneToMany(
             mappedBy = "order",
@@ -91,6 +92,14 @@ public class Order {
         this.paymentMethod = paymentMethod;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     public List<OrderItem> getItems() {
         return items;
     }
@@ -100,5 +109,20 @@ public class Order {
         for (OrderItem item : items) {
             item.setOrder(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId=" + orderId +
+                ", name='" + name + '\'' +
+                ", customerId=" + customerId +
+                ", totalPrice=" + totalPrice +
+                ", status='" + status + '\'' +
+                ", deliveryAddress='" + deliveryAddress + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", version=" + version +
+                ", items=" + items +
+                '}';
     }
 }

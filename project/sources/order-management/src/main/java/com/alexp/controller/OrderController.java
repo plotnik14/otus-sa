@@ -9,9 +9,13 @@ import com.alexp.repository.OrderRepository;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Timed(value = "order.management.requests")
@@ -26,6 +30,8 @@ public class OrderController {
     private final RabbitMessagingService rabbitMessagingService;
     private final OfferingCatalogAdapter offeringCatalogAdapter;
 
+    private final Set<String> processedRequestIds;
+
     private long sequenceNumber; // Todo change to something better
 
     public OrderController(OrderRepository orderRepository,
@@ -38,6 +44,7 @@ public class OrderController {
         this.offeringCatalogAdapter = offeringCatalogAdapter;
         initDB();
         sequenceNumber = 1;
+        processedRequestIds = new HashSet<>();
     }
 
     @GetMapping
@@ -58,14 +65,27 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
-        Order order = new Order();
+    public ResponseEntity<Order> createOrder(@RequestBody CreateOrderRequest createOrderRequest,
+                                             HttpServletRequest httpServletRequest) {
+        String requestId = httpServletRequest.getHeader("X-Request-Id");
 
+        if (requestId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (processedRequestIds.contains(requestId)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        processedRequestIds.add(requestId);
+
+        Order order = new Order();
         order.setName("Order#" + sequenceNumber++);
         order.setCustomerId(createOrderRequest.getCustomerId());
         order.setDeliveryAddress(createOrderRequest.getDeliveryAddress());
         order.setPaymentMethod(createOrderRequest.getPaymentMethod());
         order.setStatus(OrderStatus.IN_PROGRESS.getName());
+        order.setVersion(1L);
 
         order = orderRepository.save(order);
 
@@ -74,6 +94,7 @@ public class OrderController {
 
     @PostMapping("/{orderId}/changeStatus")
     public ResponseEntity<Order> changeOrderStatus(@PathVariable("orderId") UUID orderId,
+                                             @RequestParam("orderVersion") Long orderVersion,
                                              @RequestBody ChangeStatusRequest changeStatusRequest) {
         Order order = orderRepository.findById(orderId).orElse(null);
 
@@ -81,11 +102,16 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
+        if (!order.getVersion().equals(orderVersion)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         //ToDo validation
 
         String previousStatus = order.getStatus();
 
         order.setStatus(changeStatusRequest.getStatus());
+        order.setVersion(order.getVersion() + 1);
         order = orderRepository.save(order);
 
         OrderStatusChangedEvent orderStatusChangedEvent = new OrderStatusChangedEvent();
@@ -104,6 +130,7 @@ public class OrderController {
 
     @PostMapping("/{orderId}/items")
     public ResponseEntity<Order> addItemToOrder(@PathVariable("orderId") UUID orderId,
+                                                @RequestParam("orderVersion") Long orderVersion,
                                                 @RequestBody OrderItem orderItem) {
         Offering offering = offeringCatalogAdapter.getOfferingById(orderItem.getOfferingId());
 
@@ -122,6 +149,10 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
+        if (!order.getVersion().equals(orderVersion)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         orderItem.setOrder(order);
         order.getItems().add(orderItem);
 
@@ -129,12 +160,14 @@ public class OrderController {
 
         calculateTotalPrice(order);
 
+        order.setVersion(order.getVersion() + 1);
         order = orderRepository.save(order);
         return ResponseEntity.ok(order);
     }
 
     @DeleteMapping("/{orderId}/items/{itemId}")
     public ResponseEntity<Order> deleteItemFromOrder(@PathVariable("orderId") UUID orderId,
+                                                     @RequestParam("orderVersion") Long orderVersion,
                                                      @PathVariable("itemId") UUID itemId) {
         Order order = orderRepository.findById(orderId).orElse(null);
 
@@ -142,21 +175,31 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
+        if (!order.getVersion().equals(orderVersion)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         orderItemsRepository.deleteById(itemId);
 
         calculateTotalPrice(order);
 
+        order.setVersion(order.getVersion() + 1);
         order = orderRepository.save(order);
         return ResponseEntity.ok(order);
     }
 
     @PutMapping("/{orderId}")
     public ResponseEntity<Order> updateOrderParams(@PathVariable("orderId") UUID orderId,
-                                                @RequestBody Order orderParams) {
+                                                   @RequestParam("orderVersion") Long orderVersion,
+                                                   @RequestBody Order orderParams) {
         Order order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!order.getVersion().equals(orderVersion)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         if (orderParams.getName() != null) {
@@ -171,6 +214,7 @@ public class OrderController {
             order.setDeliveryAddress(orderParams.getDeliveryAddress());
         }
 
+        order.setVersion(order.getVersion() + 1);
         order = orderRepository.save(order);
 
         return ResponseEntity.ok(order);
