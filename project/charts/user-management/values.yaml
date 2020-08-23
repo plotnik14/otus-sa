@@ -27,3 +27,5 @@ postgresql:
   service:
     port: "5432"
   fullnameOverride: postgres-um
+  persistence:
+    size: 1Gi

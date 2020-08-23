@@ -20,10 +20,12 @@ ingress:
         path: /warehouse-management($|/)(.*)
 
 postgresql:
-  enabled: true
+  enabled: false
   postgresqlUsername: postgresuser
   postgresqlPassword: postgrespass
   postgresqlDatabase: postgresdb
   service:
     port: "5432"
   fullnameOverride: postgres-whm
+  persistence:
+    size: 1Gi
