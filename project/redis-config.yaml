@@ -1,3 +1,7 @@
 password: password
 cluster:
   slaveCount: 0
+# master:
+  # configmap:
+    # extraFlags:
+      # - "--maxmemory-policy volatile-ttl"
