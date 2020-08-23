@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +25,7 @@ public class UserManagementController {
     public UserManagementController(RestTemplate restTemplate, UserRepository userRepository) {
         this.restTemplate = restTemplate;
         this.userRepository = userRepository;
+        initDB();
     }
 
     @GetMapping
@@ -82,7 +84,44 @@ public class UserManagementController {
         LOGGER.debug("userIdFromHeader:{}", userIdFromHeader);
         LOGGER.debug("role:{}", role);
 
-        return userId.equals(userIdFromHeader) || role.equals("Admin");
+        return userId.equals(userIdFromHeader) || role.equals("Admin") || role.equals("Application");
     }
 
+    // Admin + Courier
+    public void initDB() {
+        User user = new User();
+        user.setUserId(UUID.fromString("036d9622-e3e3-11ea-87d0-0242ac130003"));
+        user.setLogin("admin");
+        user.setPassword(securePassword("admin"));
+        user.setEmail("admin@admin.com");
+        user.setFirstName("Admin");
+        user.setLastName("Admin");
+        user.setRole("Admin");
+
+        User existingUser = userRepository.findById(user.getUserId()).orElse(null);
+        if (existingUser == null) {
+            User createdUser = userRepository.save(user);
+        }
+
+        user = new User();
+        user.setUserId(UUID.fromString("111e226e-e3e3-11ea-87d0-0242ac130003"));
+        user.setLogin("courier");
+        user.setPassword(securePassword("courier"));
+        user.setEmail("courier@courier.com");
+        user.setFirstName("Courier");
+        user.setLastName("Courier");
+        user.setRole("Courier");
+
+        existingUser = userRepository.findById(user.getUserId()).orElse(null);
+        if (existingUser == null) {
+            User createdUser = userRepository.save(user);
+        }
+    }
+
+    // TODo change to init script
+    private String securePassword(String password) {
+        // ToDo Something better in the next release
+        password = password + "salt";
+        return Base64.getEncoder().encodeToString(password.getBytes());
+    }
 }
