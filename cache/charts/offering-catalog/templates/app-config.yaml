@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oc-config
+data:
+  POSTGRES_DB: {{ .Values.postgresql.postgresqlDatabase }}
+  POSTGRES_USER: {{ .Values.postgresql.postgresqlUsername }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oc-secret
+type: Opaque
+data:
+  POSTGRES_PASSWORD: cG9zdGdyZXNwYXNz
+  DATABASE_URI_POSTGRESQL: cG9zdGdyZXNxbDovL3Bvc3RncmVzdXNlcjpwb3N0Z3Jlc3Bhc3NAcG9zdGdyZXMtb2MvcG9zdGdyZXNkYg==
+  DATABASE_URL_JDBC: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXMtb2M6NTQzMi9wb3N0Z3Jlc2Ri

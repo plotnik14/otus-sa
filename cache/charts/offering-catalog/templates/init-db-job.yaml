@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oc-initdb
+spec:
+  template:
+    metadata:
+      name: oc-initdb
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        env:
+          - name: DATABASE_URI
+            valueFrom:
+                secretKeyRef:
+                  name: oc-secret
+                  key: DATABASE_URI_POSTGRESQL
+        image: postgres:12
+        command:
+          - sh
+          - "-c"
+          - |
+            psql $DATABASE_URI <<'EOF'
+              insert into offering(offering_id, name, description, price, status) values ('8d68f7be-e24d-11ea-87d0-0242ac130003', 'VESTON F-38/BK', 'VESTON F-38/BK Desc', 6400.0, 'Active');
+              insert into offering(offering_id, name, description, price, status) values ('995b0cba-e24d-11ea-87d0-0242ac130003', 'MARTIN LX BLACK', 'MARTIN LX BLACK Desc', 38990.0, 'Active');
+              insert into offering(offering_id, name, description, price, status) values ('9f4bb246-e24d-11ea-87d0-0242ac130003', 'FENDER FA-125 DREADNOUGHT WALNUT', 'FENDER FA-125 DREADNOUGHT WALNUT Desc', 12240.0, 'Active');
+            EOF
+  backoffLimit: 15

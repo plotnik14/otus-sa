@@ -1,0 +1,45 @@
+server:
+  port: 8000
+  tomcat:
+    max-threads: 1
+
+spring:
+  rabbitmq:
+    host: rabbitmq.otus-app.svc
+    port: 5672
+    username: user
+    password: xXRKnyKZ5N
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles:
+        user.requests: 0.5, 0.95, 0.99
+      percentiles-histogram[order.management.requests]: true
+
+logging:
+  level:
+    com.alexp: debug
