@@ -1,0 +1,140 @@
+{
+	"info": {
+		"_postman_id": "cca9a513-c4ae-41b1-bf9c-a20c18ec16b2",
+		"name": "otus-delivery-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get delivery options",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryOptions",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery-service",
+						"api",
+						"v1",
+						"deliveryOptions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get delivery tasks for courier",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks?courierId=646d54b0-e142-11ea-87d0-0242ac130003",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery-service",
+						"api",
+						"v1",
+						"deliveryTasks"
+					],
+					"query": [
+						{
+							"key": "courierId",
+							"value": "646d54b0-e142-11ea-87d0-0242ac130003"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get delivery task details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks/8690d76b-88bf-4447-a667-7282fa73a674",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery-service",
+						"api",
+						"v1",
+						"deliveryTasks",
+						"8690d76b-88bf-4447-a667-7282fa73a674"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change delivery task status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\":\"In Progress\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/delivery-service/api/v1/deliveryTasks/8690d76b-88bf-4447-a667-7282fa73a674",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"delivery-service",
+						"api",
+						"v1",
+						"deliveryTasks",
+						"8690d76b-88bf-4447-a667-7282fa73a674"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1627c086-a524-40d5-b3e5-bae399c37788",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "674f96c9-a86e-4689-8915-9e498634f69a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f4c08ecd-9503-430e-be33-9480275cdd3a",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

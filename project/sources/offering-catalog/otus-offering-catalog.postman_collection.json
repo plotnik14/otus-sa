@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "8a0a7848-e033-4a43-9192-1348474674bf",
+		"name": "otus-offering-catalog",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all offerings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"offering-catalog",
+						"api",
+						"v1",
+						"offerings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get offering by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/9f4bb246-e24d-11ea-87d0-0242ac130003",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"offering-catalog",
+						"api",
+						"v1",
+						"offerings",
+						"9f4bb246-e24d-11ea-87d0-0242ac130003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search offerings by query",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/search?query=FENDER",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"offering-catalog",
+						"api",
+						"v1",
+						"offerings",
+						"search"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "FENDER"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new offering",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"name\": \"FENDER My new\",\r\n        \"price\": 28.0,\r\n        \"description\": \"My new Desc\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"offering-catalog",
+						"api",
+						"v1",
+						"offerings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change offering status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"status\":\"Archived\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/d242de56-dc25-46c6-9d34-654b93963fb2/changeStatus",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"offering-catalog",
+						"api",
+						"v1",
+						"offerings",
+						"d242de56-dc25-46c6-9d34-654b93963fb2",
+						"changeStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update offering",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"name\": \"FENDER My new 2\",\r\n        \"price\": 289.0,\r\n        \"description\": \"My new Desc 2\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/offering-catalog/api/v1/offerings/d242de56-dc25-46c6-9d34-654b93963fb2",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"offering-catalog",
+						"api",
+						"v1",
+						"offerings",
+						"d242de56-dc25-46c6-9d34-654b93963fb2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b1dfda16-fa6d-4ff6-99be-7d129d40d31e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "b9882706-0582-4962-a268-101773116f35",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "a1520512-e4db-4c46-86ec-0a86bbfdb2f9",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

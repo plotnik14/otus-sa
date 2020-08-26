@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "2b85300f-e493-4f7e-bc86-62edc59fde26",
+		"name": "otus-payment-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get payment methods",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/payment-service/api/v1/paymentMethods",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"payment-service",
+						"api",
+						"v1",
+						"paymentMethods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Emulate payment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/payment-service/api/v1/payment/emulate/6a83fcc0-4eaf-43ae-8c5f-866c9d5eebee",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"payment-service",
+						"api",
+						"v1",
+						"payment",
+						"emulate",
+						"6a83fcc0-4eaf-43ae-8c5f-866c9d5eebee"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "35734dff-cd32-463e-a061-013cac7a0a38",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f9730a1e-2844-49c3-bfe3-9d96161c9e89",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "897460d0-9e2d-4397-9fc0-ad663b7b8950",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

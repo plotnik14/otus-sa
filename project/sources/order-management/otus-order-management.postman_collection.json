@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "364a3c17-c6c7-4949-a235-43da4eeada4a",
+		"name": "otus-order-management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all orders for customer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders?customerId={{userId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get order by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "553bc9a4-a312-4855-aef1-169449685698",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"orderId\", responseJSON[\"orderId\"])"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"customerId\":\"{{userId}}\",\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change order status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"status\":\"Submitted\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/changeStatus",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders",
+						"{{orderId}}",
+						"changeStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update order params",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"deliveryAddress\":\"{{address}}\",\r\n\t\"paymentMethod\": \"{{paymentMethod}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add order item",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2a0ee9d6-4753-4c00-a19f-5fcbb4dc2371",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"offeringId\":\"9f4bb246-e24d-11ea-87d0-0242ac130003\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/items",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders",
+						"{{orderId}}",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete order item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/order-management/api/v1/orders/{{orderId}}/items/057b9942-5a96-4c03-b4d1-312ef6315233",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"order-management",
+						"api",
+						"v1",
+						"orders",
+						"{{orderId}}",
+						"items",
+						"057b9942-5a96-4c03-b4d1-312ef6315233"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f905757d-0664-4e83-b539-61bcdf7ead08",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d4a60b54-e5ac-408d-b761-8c93db93fa41",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "5c460abf-2979-48a4-8a08-dc922bcbc2d2",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		},
+		{
+			"id": "32c229e7-bab7-4f1b-b55c-dc4d24fd3d0c",
+			"key": "userId",
+			"value": "9e7ef4b6-43fb-4a26-847c-02bee290efc4"
+		},
+		{
+			"id": "c0c73e6a-6e79-40ff-8d90-df18c51a53e6",
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"id": "ef9a9e4f-2269-4cbc-a978-76330f189ca0",
+			"key": "itemId",
+			"value": ""
+		},
+		{
+			"id": "bb94d48a-54f3-4979-bded-c0179cb351c9",
+			"key": "address",
+			"value": "Lenina 2"
+		},
+		{
+			"id": "c4e19dfe-f10e-4693-99df-03dd3e194563",
+			"key": "paymentMethod",
+			"value": "Credit Card"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

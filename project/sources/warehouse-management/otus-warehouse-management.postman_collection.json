@@ -1,0 +1,66 @@
+{
+	"info": {
+		"_postman_id": "7a5091a6-f9ff-4a4f-ade9-1588366b05f1",
+		"name": "otus-warehouse-management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get offering availability",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/warehouse-management/api/v1/availability?offeringId=9f4bb246-e24d-11ea-87d0-0242ac130003",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"warehouse-management",
+						"api",
+						"v1",
+						"availability"
+					],
+					"query": [
+						{
+							"key": "offeringId",
+							"value": "9f4bb246-e24d-11ea-87d0-0242ac130003"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "53a34f2e-ef57-408b-b1b7-20b4c5199c36",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0167df5a-4a28-4eaa-b2d8-d2864da26a94",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "1783dcd9-fb93-4f57-9dc6-74b5ec1b80c4",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
