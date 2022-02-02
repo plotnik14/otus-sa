@@ -10,7 +10,7 @@
 
     <properties>
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
-        <postgresql.version>42.2.12</postgresql.version>
+        <postgresql.version>42.2.25</postgresql.version>
     </properties>
 
     <dependencies>
