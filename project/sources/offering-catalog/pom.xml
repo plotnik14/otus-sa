@@ -11,7 +11,7 @@
     <properties>
         <spring.boot.version>2.2.6.RELEASE</spring.boot.version>
         <!--        <h2.database.version>1.4.199</h2.database.version>-->
-        <postgresql.version>42.2.12</postgresql.version>
+        <postgresql.version>42.3.3</postgresql.version>
 <!--        <jedis.version>3.3.0</jedis.version>-->
     </properties>
 
