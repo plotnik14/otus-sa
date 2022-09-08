@@ -10,7 +10,7 @@
 
     <properties>
         <spring.boot.version>2.5.12</spring.boot.version>
-        <h2.database.version>1.4.199</h2.database.version>
+        <h2.database.version>2.1.210</h2.database.version>
 <!--        <postgresql.version>42.2.12</postgresql.version>-->
     </properties>
 
